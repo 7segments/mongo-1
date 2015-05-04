@@ -1144,13 +1144,27 @@ namespace mongo {
         BSONObj longLongMatch = BSON( "a" << 68719476736LL );
         BSONObj notMatch = BSON( "a" << 6 );
         BSONObj negativeNotMatch = BSON( "a" << -2 );
+        BSONObj stringMatch = BSON( "a" << "5547743d31d81d6fada19168" );
+        BSONObj oidMatch = BSON("a" << OID("5547743d31d81d6fada19168"));
+        BSONObj anotherStringMatch = BSON( "a" << "5547743c31d81d6fada19164" );
+        BSONObj anotherOidMatch = BSON("a" << OID("5547743c31d81d6fada19164"));
+        BSONObj stringNotMatch = BSON("a" << "5547743c31d81d6fada19163");
+        BSONObj oidNotMatch = BSON("a" << OID("5547743c31d81d6fada19163"));
         ModMatchExpression mod;
+        ModMatchExpression mod2;
         ASSERT( mod.init( "", 3, 1 ).isOK() );
+        ASSERT( mod2.init( "", 3, 2 ).isOK() );
         ASSERT( mod.matchesSingleElement( match.firstElement() ) );
         ASSERT( mod.matchesSingleElement( largerMatch.firstElement() ) );
         ASSERT( mod.matchesSingleElement( longLongMatch.firstElement() ) );
         ASSERT( !mod.matchesSingleElement( notMatch.firstElement() ) );
         ASSERT( !mod.matchesSingleElement( negativeNotMatch.firstElement() ) );
+        ASSERT( mod.matchesSingleElement( stringMatch.firstElement() ) );
+        ASSERT( mod.matchesSingleElement( oidMatch.firstElement() ) );
+        ASSERT( mod2.matchesSingleElement( anotherStringMatch.firstElement() ) );
+        ASSERT( mod2.matchesSingleElement( anotherOidMatch.firstElement() ) );
+        ASSERT( !mod2.matchesSingleElement( stringNotMatch.firstElement() ) );
+        ASSERT( !mod2.matchesSingleElement( oidNotMatch.firstElement() ) );
     }
 
     TEST( ModMatchExpression, ZeroDivisor ) {

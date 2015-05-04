@@ -303,9 +303,27 @@ namespace mongo {
     }
 
     bool ModMatchExpression::matchesSingleElement( const BSONElement& e ) const {
-        if ( !e.isNumber() )
+        switch (e.type()) {
+        case jstOID:
+        case String:
+            {
+                std::string value = ( e.type() == jstOID) ? e.OID().toString() : e.String();
+                int hash = 0;
+                for ( std::string::iterator it = value.begin(); it != value.end(); ++it) {
+                    hash += *it;
+                    hash %= _divisor;
+                }
+                return hash == _remainder;
+            }
+        case NumberLong:
+        case NumberDouble:
+        case NumberInt:
+            return e.numberLong() % _divisor == _remainder;
+        default:
             return false;
-        return e.numberLong() % _divisor == _remainder;
+        }
+        // not reached
+        return false;
     }
 
     void ModMatchExpression::debugString( StringBuilder& debug, int level ) const {

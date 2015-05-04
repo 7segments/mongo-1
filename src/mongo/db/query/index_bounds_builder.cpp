@@ -520,6 +520,21 @@ namespace mongo {
             BSONObj dataObj = bob.obj();
             verify(dataObj.isOwned());
             oilOut->intervals.push_back(makeRangeInterval(dataObj, true, true));
+
+            BSONObjBuilder bob2;
+            bob2.appendMinForType("", String);
+            bob2.appendMaxForType("", String);
+            BSONObj dataObj2 = bob2.obj();
+            verify(dataObj2.isOwned());
+            oilOut->intervals.push_back(makeRangeInterval(dataObj2, true, true));
+
+            BSONObjBuilder bob3;
+            bob3.appendMinForType("", jstOID);
+            bob3.appendMaxForType("", jstOID);
+            BSONObj dataObj3 = bob3.obj();
+            verify(dataObj3.isOwned());
+            oilOut->intervals.push_back(makeRangeInterval(dataObj3, true, true));
+
             *tightnessOut = IndexBoundsBuilder::INEXACT_COVERED;
         }
         else if (MatchExpression::TYPE_OPERATOR == expr->matchType()) {
